@@ -15,11 +15,11 @@ kubectl create namespace myns
 # if no default storage class, create Provisioner
 kubectl create -f examples/gce/class.yaml
 
-kubectl -f examples/gce/pvc.yaml
+kubectl create -f examples/gce/pvc.yaml
 ```
  * Create a Snapshot Third Party Resource 
 ```bash
-kubectl -f examples/gce/snapshot.yaml
+kubectl create -f examples/gce/snapshot.yaml
 ```
 
 #### Check VolumeSnapshot and VolumeSnapshotData are created

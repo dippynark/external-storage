@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM busybox:glibc
-COPY snapshot-provisioner /bin/snapshot-provisioner
-ENTRYPOINT ["/bin/snapshot-provisioner"]
+FROM alpine:3.6
+
+RUN apk add --no-cache ca-certificates
+
+COPY _output/bin/snapshot-controller-linux-amd64 /usr/bin/snapshot-controller
+
+ENTRYPOINT ["/usr/bin/snapshot-controller"]

@@ -15,9 +15,9 @@ spec:
       containers:
         - name: snapshot-controller
           image: snapshot-controller
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           args:
-            - "-cloudprovider aws"
+            - "-cloudprovider=aws"
           env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
@@ -31,9 +31,9 @@ spec:
                   key: secret-access-key
         - name: snapshot-provisioner
           image: snapshot-provisioner
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           args:
-            - "-cloudprovider aws"
+            - "-cloudprovider=aws"
           env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:

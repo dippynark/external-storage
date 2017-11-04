@@ -16,22 +16,10 @@ spec:
         - name: snapshot-controller
           image: snapshot-controller
           imagePullPolicy: Always
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: hostpath-source
-              mountPath: /test
+          args:
+            - "-cloudprovider=gce"
         - name: snapshot-provisioner
           image: snapshot-provisioner
           imagePullPolicy: Always
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: hostpath-source
-              mountPath: /test
-      volumes:
-        - name: tmp
-          hostPath:
-            path: /tmp
-        - name: hostpath-source
-          emptyDir: {}
+          args:
+            - "-cloudprovider=gce"

@@ -18,6 +18,12 @@ endif
 ifeq ($(VERSION),)
 	VERSION = latest
 endif
+ifeq ($(GOOS),)
+	GOOS = linux
+endif
+ifeq ($(GOARCH),)
+	GOARCH = amd64
+endif
 IMAGE_CONTROLLER = $(REGISTRY)snapshot-controller:$(VERSION)
 MUTABLE_IMAGE_CONTROLLER = $(REGISTRY)snapshot-controller:latest
 IMAGE_PROVISIONER = $(REGISTRY)snapshot-provisioner:$(VERSION)
@@ -28,14 +34,12 @@ MUTABLE_IMAGE_PROVISIONER = $(REGISTRY)snapshot-provisioner:latest
 all: controller provisioner
 
 controller:
-	go build -o _output/bin/snapshot-controller cmd/snapshot-controller/snapshot-controller.go
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o _output/bin/snapshot-controller-$(GOOS)-$(GOARCH) cmd/snapshot-controller/snapshot-controller.go
 
 provisioner:
-	go build -o _output/bin/snapshot-provisioner cmd/snapshot-pv-provisioner/snapshot-pv-provisioner.go
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o _output/bin/snapshot-provisioner-$(GOOS)-$(GOARCH) cmd/snapshot-pv-provisioner/snapshot-pv-provisioner.go
 
 clean:
-	-rm -f deploy/controller/snapshot-controller
-	-rm -f deploy/provisioner/snapshot-provisioner
 	-rm -rf _output
 
 test:
@@ -44,11 +48,9 @@ test:
 container: controller provisioner container-quick
 
 container-quick:
-	cp _output/bin/snapshot-controller deploy/docker/controller
-	cp _output/bin/snapshot-provisioner deploy/docker/provisioner
-	docker build -t $(MUTABLE_IMAGE_CONTROLLER) deploy/docker/controller
+	docker build -t $(MUTABLE_IMAGE_CONTROLLER) . -f Dockerfile.controller
 	docker tag $(MUTABLE_IMAGE_CONTROLLER) $(IMAGE_CONTROLLER)
-	docker build -t $(MUTABLE_IMAGE_PROVISIONER) deploy/docker/provisioner
+	docker build -t $(MUTABLE_IMAGE_PROVISIONER) . -f Dockerfile.provisioner
 	docker tag $(MUTABLE_IMAGE_PROVISIONER) $(IMAGE_PROVISIONER)
 
 push: container
